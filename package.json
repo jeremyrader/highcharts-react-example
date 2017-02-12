@@ -1,0 +1,11 @@
+{
+  "name": "highcharts-react",
+  "version": "1.0.0",
+  "description": "demonstration of highcharts and react with data from restapi endpoints",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeremy Rader",
+  "license": "ISC"
+}
