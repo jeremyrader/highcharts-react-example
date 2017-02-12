@@ -1,34 +1,33 @@
 'use strict';
 
-const request = require('request');
+const co = require('co');
+const request = require('co-request');
 
 const API_KEY = 'b1fed46bf782dcadffc219042fef43d3';
 
+let weatherApi = {};
 
-let endpoint = 'http://api.openweathermap.org/data/2.5/forecast/city?id=2643743&APPID=' + API_KEY;
+weatherApi.getCityForecast = co.wrap(function* (cityId) {
 
-request(endpoint, function (error, response, body) {
-    
-    if (error) console.log(error);
-    
-    if (!error && response.statusCode == 200) {
-        let data = JSON.parse(response.body);
+    let endpoint = 'http://api.openweathermap.org/data/2.5/forecast?id=' + cityId + '&appid=' + API_KEY;
 
-        let simpleForecast = data.list.map(function(item) {
-            return {
-                time: item.dt,
-                temp: item.main.temp
-            }
-        });
-        
+    let response = yield request(endpoint);
 
-        let cityForecast = {
-            city: data.city.name,
-            country: data.city.country,
-            forecast: simpleForecast 
+    let data = JSON.parse(response.body);
+
+    let simpleForecast = data.list.map(function(item) {
+        return {
+            time: item.dt,
+            temp: item.main.temp
         }
+    });
 
-        console.log(cityForecast);
-        
+    return {
+        city: data.city.name,
+        country: data.city.country,
+        forecast: simpleForecast
     }
+
 });
+
+module.exports = weatherApi;
