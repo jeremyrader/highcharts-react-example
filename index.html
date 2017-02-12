@@ -14,28 +14,85 @@
         <script> 
         
             $(function () { 
+
+                let data = [ 
+                    { time: 1486933200, temp: 278.5 },
+                    { time: 1486944000, temp: 278.94 },
+                    { time: 1486954800, temp: 278.46 },
+                    { time: 1486965600, temp: 277.38 },
+                    { time: 1486976400, temp: 277.925 },
+                    { time: 1486987200, temp: 280.695 },
+                    { time: 1486998000, temp: 280.39 },
+                    { time: 1487008800, temp: 278.144 },
+                    { time: 1487019600, temp: 277.638 },
+                    { time: 1487030400, temp: 277.306 },
+                    { time: 1487041200, temp: 276.7 },
+                    { time: 1487052000, temp: 276.03 },
+                    { time: 1487062800, temp: 276.862 },
+                    { time: 1487073600, temp: 280.565 },
+                    { time: 1487084400, temp: 282.497 },
+                    { time: 1487095200, temp: 281.417 },
+                    { time: 1487106000, temp: 281.829 },
+                    { time: 1487116800, temp: 282.609 },
+                    { time: 1487127600, temp: 282.516 },
+                    { time: 1487138400, temp: 282.596 },
+                    { time: 1487149200, temp: 282.875 },
+                    { time: 1487160000, temp: 284.535 },
+                    { time: 1487170800, temp: 284.532 },
+                    { time: 1487181600, temp: 283.656 },
+                    { time: 1487192400, temp: 282.85 },
+                    { time: 1487203200, temp: 280.753 },
+                    { time: 1487214000, temp: 280.059 },
+                    { time: 1487224800, temp: 279.099 },
+                    { time: 1487235600, temp: 279.286 },
+                    { time: 1487246400, temp: 282.606 },
+                    { time: 1487257200, temp: 283.57 },
+                    { time: 1487268000, temp: 281.207 },
+                    { time: 1487278800, temp: 279.629 },
+                    { time: 1487289600, temp: 277.525 },
+                    { time: 1487300400, temp: 278.204 },
+                    { time: 1487311200, temp: 275.618 },
+                    { time: 1487322000, temp: 277.318 },
+                    { time: 1487332800, temp: 282.885 },
+                    { time: 1487343600, temp: 283.503 },
+                    { time: 1487354400, temp: 280.138 }
+                ];
+
+                let dataArray = [];
+                
+                for (obj of data) {
+                    dataArray.push([obj.time * 1000, obj.temp]);
+                }
                 
                 var myChart = Highcharts.chart('container', {
                     chart: {
-                        type: 'bar'
+                        type: 'line'
                     },
                     title: {
-                        text: 'Fruit Consumption'
+                        text: 'Weather forecast for major cities'
                     },
                     xAxis: {
-                        categories: ['Apples', 'Bananas', 'Oranges']
+                        type: 'datetime',
+                        tickInterval: 24 * 3600 * 1000,
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
                     },
                     yAxis: {
                         title: {
-                            text: 'Fruit eaten'
+                            text: 'Degrees Kelvin'
+                        },
+                        labels: {
+                            formatter: function() {
+                                return this.value + '° K';   
+                            }
                         }
                     },
                     series: [{
-                        name: 'Jane',
-                        data: [1, 0, 4]
-                    }, {
-                        name: 'John',
-                        data: [5, 7, 3]
+                        name: 'London, GB',
+                        data: dataArray
                     }]
                 });
                 
