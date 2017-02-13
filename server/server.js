@@ -6,7 +6,6 @@ const serve = require('koa-static');
 const co = require('co');
 
 const app = koa();
-const koaBody = require('koa-body')();
 const router = require('koa-router')();
 
 const weatherApi = require('./weatherApi.js');
