@@ -10,22 +10,16 @@ let weatherApi = {};
 weatherApi.getCityForecast = co.wrap(function* (cityId) {
 
     let endpoint = 'http://api.openweathermap.org/data/2.5/forecast?id=' + cityId + '&appid=' + API_KEY;
-
     let response = yield request(endpoint);
 
     let data = JSON.parse(response.body);
 
-    let simpleForecast = data.list.map(function(item) {
-        return {
-            time: item.dt,
-            temp: item.main.temp
-        }
-    });
-
     return {
         city: data.city.name,
         country: data.city.country,
-        forecast: simpleForecast
+        forecast: data.list.map(function(item) {
+            return [ item.dt  * 1000, item.main.temp ]
+        })
     }
 
 });

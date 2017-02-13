@@ -13,22 +13,32 @@ const weatherApi = require('./weatherApi.js');
 
 app.use(mount('/', serve(__dirname + '/../', { index: 'index.html' } )));
 
-let cityIds = ['2643743', '2964574', '4148411'];
-let cityForecasts = [];
 
+let cityForecasts = null;
 
-let requests = [];
-
-cityIds.forEach(cityId => {
-    requests.push(weatherApi.getCityForecast(cityId));
-});
-
-Promise.all(requests).then(values => {
-    console.log(values);
+router.get('/cityForecasts', function *() {
+    this.body = { cityForecasts: cityForecasts };
 });
 
 app.use(router.routes());
 
 app.listen(3000, () => {
+    initCityData();
     console.log('Server listening on: http://localhost:3000');
 });
+
+function initCityData() {
+
+    let requests = [];
+
+    let cityIds = ['2643743', '2964574', '4148411'];
+
+    cityIds.forEach(cityId => {
+        requests.push(weatherApi.getCityForecast(cityId));
+    });
+
+    Promise.all(requests).then(values => {
+        cityForecasts = values;
+    });
+
+}
