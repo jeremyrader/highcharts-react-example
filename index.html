@@ -5,101 +5,212 @@
         <script src="http://code.highcharts.com/highcharts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.9/js/uikit.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.8/css/uikit.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     
     </head>
     
     <body>
 
-        <div uk-grid class="uk-flex uk-flex-column">
+        <div id="app"></div>
 
-            <div id="container" class="uk-card uk-card-default uk-card-body uk-align-center uk-margin-top"></div>
-            <div class="uk-form uk-card uk-card-default uk-card-body uk-align-center">
+        <script type="text/babel">
 
-                <div>
-                    <label class="uk-first-column">
-                        <input class="uk-radio" type="radio" name="heat-unit" checked>Kelvin
-                    </label>
+            var RadioComponent = React.createClass({
 
-                    <label>
-                        <input class="uk-radio" type="radio" name="heat-unit">Fahrenheit
-                    </label>
+                getInitialState: function() {
+                    return {
+                        default: this.props.options[0]
+                    }
+                },
+                onChangeOption: function(e) {
 
-                    <label>
-                        <input class="uk-radio" type="radio" name="heat-unit">Celsius
-                    </label>
+                    this.setState({
+                        default: e.target.value
+                    });
 
-                </div>
+                    let data = null;
+                    let title = null;
+                    let unit = null;
 
-                <div>
+                    if (e.target.value === 'Temperature') {
+                        title = 'Temperature';
+                        data = 'temperature';
+                        unit = '° F';
+                    }
+                    if (e.target.value === 'Humidity') {
+                        title = 'Humidity';
+                        data = 'humidity';
+                        unit = '%';
+                    }
+                    if (e.target.value === 'Windspeed') {
+                        title = 'Wind Speed';
+                        data = 'windSpeed';
+                        unit = 'm/s'
+                    }
 
-                    <label class="uk-first-column">
-                        <input class="uk-radio" type="radio" name="forecast" checked>Temperature
-                    </label>
+                    let cityForecasts = JSON.parse(localStorage.getItem('cityForecasts'));
 
-                    <label>
-                        <input class="uk-radio" type="radio" name="forecast">Humidity
-                    </label>
+                    let series = [];
 
-                    <label>
-                        <input class="uk-radio" type="radio" name="forecast">Wind speed
-                    </label>
+                    cityForecasts.forEach(function(cityForecast) {
 
-                </div>
+                        series.push({
+                            name: cityForecast.city + ',' + cityForecast.country,
+                            data: cityForecast[data]
+                        });
 
-            </div>
+                    });
 
-        </div>
+                    let options = {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: 'Weather Forecast'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            tickInterval: 24 * 3600 * 1000,
+                        },
+                        yAxis: {
+                            title: {
+                                text: title
+                            },
+                            labels: {
+                                formatter: function() {
+                                    return this.value + unit;
+                                }
+                            }
+                        },
+                        series: series
+                    };
+
+                    Highcharts.chart('container', options);
+
+                },
+                render: function() {
+
+                    var optionRows = this.props.options.map(function(option) {
+
+                        return (
+                            <label key={option} className="uk-margin-left">
+                                <input
+                                    className="uk-radio"
+                                    type="radio"
+                                    name={this.props.name}
+                                    value={option}
+                                    checked={this.state.default === option}
+                                    onChange={this.onChangeOption} />
+                                {option}
+                            </label>
+
+                        )
+
+                    }, this);
+
+                    return (
+                        <div>
+                            {optionRows}
+                        </div>
+                    )
+
+                }
+            });
+
+            var ControlComponent = React.createClass({
+
+                render: function() {
+
+                    return (
+                        <div className="uk-form uk-card uk-card-default uk-card-body uk-align-center">
+                            <RadioComponent options={['Temperature', 'Humidity', 'Windspeed']} name={"forecast"} />
+                        </div>
+                    )
+
+                }
+
+            });
+
+            var ChartComponent = React.createClass({
+
+                componentDidMount: function() {
+                    var myChart = Highcharts.chart('container', this.props.options);
+                },
+
+                render: function() {
+
+                    return (
+                        <div id="container" className="uk-card uk-card-default uk-card-body uk-align-center uk-margin-top"></div>
+                    )
+
+                }
+            });
+
+            var MainComponent = React.createClass({
+
+                render: function() {
+
+                    let cityForecasts = JSON.parse(localStorage.getItem('cityForecasts'));
+
+                    let series = [];
+
+                    cityForecasts.forEach(function(cityForecast) {
+
+                        series.push({
+                            name: cityForecast.city + ',' + cityForecast.country,
+                            data: cityForecast.temperature
+                        });
+
+                    });
+
+                    let options = {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: 'Weather Forecast'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            tickInterval: 24 * 3600 * 1000,
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Temperature'
+                            },
+                            labels: {
+                                formatter: function() {
+                                    return this.value + '° F';
+                                }
+                            }
+                        },
+                        series: series
+                    };
+
+                    return (
+                        <div uk-grid className="uk-flex uk-flex-column">
+                            <ChartComponent options={options}/>
+                            <ControlComponent />
+                        </div>
+                    )
+
+                }
+
+            });
+
+            ReactDOM.render(<MainComponent />, document.querySelector('#app'));
+        </script>
 
 
-
-        <script> 
+        <script>
 
             $.ajax({
                 url: '/cityForecasts',
                 success: function(data) {
                     localStorage.setItem('cityForecasts', JSON.stringify(data.cityForecasts));
                 }
-            });
-
-            $(function () { 
-
-                let cityForecasts = JSON.parse(localStorage.getItem('cityForecasts'));
-
-                let series = [];
-
-                for (cityForecast of cityForecasts) {
-
-                    series.push({
-                        name: cityForecast.city + ',' + cityForecast.country,
-                        data: cityForecast.temperature
-                    });
-
-                }
-
-                var myChart = Highcharts.chart('container', {
-                    chart: {
-                        type: 'line'
-                    },
-                    title: {
-                        text: 'Weather forecast for major cities'
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        tickInterval: 24 * 3600 * 1000,
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'Degrees Kelvin'
-                        },
-                        labels: {
-                            formatter: function() {
-                                return this.value + '° K';   
-                            }
-                        }
-                    },
-                    series: series
-                });
-                
             });
         
         </script>
