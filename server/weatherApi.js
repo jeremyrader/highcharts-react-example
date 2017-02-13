@@ -18,7 +18,13 @@ weatherApi.getCityForecast = co.wrap(function* (cityId) {
         city: data.city.name,
         country: data.city.country,
         temperature: data.list.map(function(item) {
-            return [ item.dt  * 1000, item.main.temp ]
+            return [ item.dt * 1000, item.main.temp ]
+        }),
+        humidity: data.list.map(function(item) {
+            return [ item.dt * 1000, item.main.humidity ]
+        }),
+        windSpeed: data.list.map(function(item) {
+            return [ item.dt * 1000, item.wind.speed ]
         })
     }
 
