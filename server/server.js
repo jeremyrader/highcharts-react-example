@@ -21,9 +21,9 @@ router.get('/cityForecasts', function *() {
 
 app.use(router.routes());
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     initCityData();
-    console.log('Server listening on: http://localhost:3000');
+    console.log('Server listening on: http://localhost:3001');
 });
 
 function initCityData() {
