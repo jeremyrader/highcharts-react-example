@@ -10,7 +10,7 @@ const router = require('koa-router')();
 
 const weatherApi = require('./weatherApi.js');
 
-app.use(mount('/', serve(__dirname + '/../', { index: 'index.html' } )));
+//app.use(mount('/', serve(__dirname + '/../', { index: 'index.html' } )));
 
 
 let cityForecasts = null;
