@@ -1,43 +1,24 @@
-'use strict';
+'use strict'
 
-const koa = require('koa');
-const mount = require('koa-mount');
-const serve = require('koa-static');
-const co = require('co');
+const Koa = require('koa')
 
-const app = koa();
-const router = require('koa-router')();
+const app = new Koa()
+const router = require('koa-router')()
 
-const weatherApi = require('./weatherApi.js');
+const weatherApi = require('./weatherApi.js')
 
-//app.use(mount('/', serve(__dirname + '/../', { index: 'index.html' } )));
+router.get('/cityForecasts', async (ctx, next) => {
 
+    await next()
 
-let cityForecasts = null;
+    let cityIds = ['2643743', '2964574', '4148411']
+    let requests = cityIds.map(async cityId => await weatherApi.getCityForecast(cityId))
 
-router.get('/cityForecasts', function *() {
-    this.body = { cityForecasts: cityForecasts };
-});
+    ctx.body = { cityForecasts: await Promise.all(requests)}
+})
 
-app.use(router.routes());
+app.use(router.routes())
 
 app.listen(3001, () => {
-    initCityData();
-    console.log('Server listening on: http://localhost:3001');
-});
-
-function initCityData() {
-
-    let requests = [];
-
-    let cityIds = ['2643743', '2964574', '4148411'];
-
-    cityIds.forEach(cityId => {
-        requests.push(weatherApi.getCityForecast(cityId));
-    });
-
-    Promise.all(requests).then(values => {
-        cityForecasts = values;
-    });
-
-}
+    console.log('Server listening on: http://localhost:3001')
+})

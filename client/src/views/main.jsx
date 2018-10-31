@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import WeatherForecast from '../components/WeatherForecast';
+import React, { Component } from 'react'
+import WeatherForecast from '../components/WeatherForecast'
 
-class Main extends Component {
+export default class Main extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             selectedMetric: 'Temperature'
         }
@@ -24,6 +24,7 @@ class Main extends Component {
                                         type="radio"
                                         name="forecast"
                                         value={option}
+                                        checked={this.state.selectedMetric === option}
                                         onChange={(e) => {
                                             this.setState({
                                                 selectedMetric: e.target.value
@@ -40,5 +41,3 @@ class Main extends Component {
         )
     }
 }
-
-export default Main;
