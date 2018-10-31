@@ -1,38 +1,30 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class WeatherForecast extends Component {
 
-    //componentDidMount() {
-    ////    window.Highcharts.chart('container', this.props.options);
-    //}
+    constructor(props) {
+        super(props)
+        this.state = {
+            cityForecasts: null
+        }
+    }
+
+    componentWillMount() {
+        window.$.ajax({
+            url: '/cityForecasts',
+            success: (data) => {
+                this.setState({cityForecasts: data.cityForecasts})
+            }
+        })
+    }
 
     render() {
 
-        let units = {
-            "temperature": '° F',
-            "humidity": '%',
-            "windspeed": 'm/s'
-        }
+        let {selectedMetric} = this.props
 
-        let title = this.props.selectedMetric;
-        let data = this.props.selectedMetric.toLowerCase();
-        let unit = units[this.props.selectedMetric.toLowerCase()];
+        if (this.state.cityForecasts) {
 
-        let cityForecasts = this.props.cityForecasts;
-
-        if (cityForecasts) {
-            let series = [];
-            
-            cityForecasts.forEach(function(cityForecast) {
-    
-                series.push({
-                    name: cityForecast.city + ',' + cityForecast.country,
-                    data: cityForecast[data]
-                });
-    
-            });
-    
-            let options = {
+            window.Highcharts.chart('container', {
                 chart: {
                     type: 'line'
                 },
@@ -45,18 +37,29 @@ class WeatherForecast extends Component {
                 },
                 yAxis: {
                     title: {
-                        text: title
+                        text: selectedMetric
                     },
                     labels: {
                         formatter: function() {
-                            return this.value + unit;
+
+                            let units = {
+                                "temperature": '° F',
+                                "humidity": '%',
+                                "windspeed": 'm/s'
+                            }
+
+                            return this.value + units[selectedMetric.toLowerCase()]
                         }
                     }
                 },
-                series: series
-            };
-    
-            window.Highcharts.chart('container', options);
+                series: this.state.cityForecasts.map(cityForecast => {
+                    return {
+                        name: `${cityForecast.city},${cityForecast.country}`,
+                        data: cityForecast[selectedMetric.toLowerCase()]
+                    }
+                })
+            })
+
         }
 
         return (
@@ -65,4 +68,4 @@ class WeatherForecast extends Component {
     }
 }
 
-export default WeatherForecast;
+export default WeatherForecast

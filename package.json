@@ -6,7 +6,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node server.js",
-    "client": "node start-client.js",
+    "client": "cd client && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jeremy Rader",
